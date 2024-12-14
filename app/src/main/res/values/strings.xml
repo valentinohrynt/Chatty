@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">Chatty</string>
+    <string name="birth_date">Birth Date</string>
+    <string name="birth_date_placeholder">DD/MM/YYYY</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="name">Name</string>
+    <string name="register">Register</string>
+    <string name="login">Login</string>
+    <string name="no_account">Don\'t have an account?</string>
+    <string name="already_have_account">Already have an account?</string>
+    <string name="sign_in_with_google">Sign in with Google</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="send_verification_code">Send verification code</string>
+    <string name="email_login">Email</string>
+    <string name="phone_login">Phone</string>
+    <string name="verification_code">Verification Code</string>
+    <string name="verify_code">Verify Code</string>
 </resources>
