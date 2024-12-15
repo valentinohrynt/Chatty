@@ -1,4 +1,4 @@
-package com.inoo.chatty.ui.main
+package com.inoo.chatty.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -53,34 +53,17 @@ fun CustomBottomNavigation(
     NavigationBar(
         modifier = modifier
             .fillMaxWidth()
-            .height(70.dp)
             .background(Color.Transparent),
-        windowInsets = WindowInsets(0,0,0,0)
+        windowInsets = WindowInsets(0, 0, 0, 0)
     ) {
         items.forEachIndexed { index, item ->
             NavigationBarItem(
                 icon = {
-                    Box(
-                        modifier = Modifier
-                            .size(40.dp)
-                            .background(
-                                color = if (selectedItem == index)
-                                    Color.White.copy(alpha = 0.2f)
-                                else
-                                    Color.Transparent,
-                                shape = CircleShape
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = item.icon,
-                            contentDescription = item.label,
-                            modifier = Modifier.size(24.dp),
-                            tint = if (selectedItem == index)
-                                Color.White
-                            else Color.White.copy(alpha = 0.6f)
-                        )
-                    }
+                    Icon(
+                        imageVector = item.icon,
+                        contentDescription = item.label,
+                        modifier = Modifier.size(24.dp)
+                    )
                 },
                 label = {
                     Text(
@@ -96,14 +79,7 @@ fun CustomBottomNavigation(
                     )
                 },
                 selected = selectedItem == index,
-                onClick = { onItemSelected(index) },
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = Color.White,
-                    selectedTextColor = Color.White,
-                    unselectedIconColor = Color.White.copy(alpha = 0.6f),
-                    unselectedTextColor = Color.White.copy(alpha = 0.6f),
-                    indicatorColor = Color.Transparent
-                )
+                onClick = { onItemSelected(index) }
             )
         }
     }

@@ -16,4 +16,17 @@
     <string name="phone_login">Phone</string>
     <string name="verification_code">Verification Code</string>
     <string name="verify_code">Verify Code</string>
+    <string name="welcome">"Welcome Back!"</string>
+    <string name="phone_number_not_set">You have not set your phone number</string>
+    <string name="no_messages">No chats available</string>
+    <string name="new_chat">New Chat</string>
+    <string name="search">Search here</string>
+    <string name="permission_required">Permission Required</string>
+    <string name="contact_permission_required_message">This app needs access to your contacts to function properly. Please grant contact permission in the app settings.</string>
+    <string name="no_messages_desc">Create new conversation and it will show up here</string>
+    <string name="no_contacts">No contacts available</string>
+    <string name="no_contacts_desc">Add new contacts to start chatting</string>
+    <string name="profile">Profile</string>
+    <string name="logout">Logout</string>
+    <string name="chat">Chat</string>
 </resources>

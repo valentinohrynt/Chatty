@@ -81,6 +81,7 @@ import kotlinx.coroutines.launch
 fun AuthScreen(onSuccess: () -> Unit) {
     val viewModel = hiltViewModel<AuthViewModel>()
     val uiState by viewModel.uiState.collectAsState()
+
     val name by viewModel.name.collectAsState()
     val email by viewModel.email.collectAsState()
     val password by viewModel.password.collectAsState()
@@ -164,7 +165,10 @@ fun AuthScreen(onSuccess: () -> Unit) {
                         clip = false
                     }
             ) {
-                if (isLoginScreen) {
+                if (uiState.isLoading) {
+                    LoadingState()
+                }
+                else if (isLoginScreen) {
                     LoginScreen(
                         viewModel = viewModel,
                         uiState = uiState,
@@ -228,6 +232,7 @@ fun AuthScreen(onSuccess: () -> Unit) {
                         viewModel = viewModel,
                         uiState = uiState,
                         name = name,
+                        phoneNumber = phoneNumber,
                         email = email,
                         password = password,
                         changeToLogin = {
@@ -396,11 +401,7 @@ private fun EmailLoginContent(
         modifier = Modifier.fillMaxWidth(),
         enabled = !uiState.isLoading
     ) {
-        if (uiState.isLoading) {
-            LoadingState()
-        } else {
-            Text(text = stringResource(id = R.string.login))
-        }
+        Text(text = stringResource(id = R.string.login))
     }
 }
 
@@ -431,11 +432,7 @@ private fun PhoneLoginContent(
             modifier = Modifier.fillMaxWidth(),
             enabled = !uiState.isLoading && verificationCode?.isNotBlank() == true
         ) {
-            if (uiState.isLoading) {
-                LoadingState()
-            } else {
-                Text(text = stringResource(id = R.string.verify_code))
-            }
+            Text(text = stringResource(id = R.string.verify_code))
         }
     } else {
         OutlinedTextField(
@@ -500,6 +497,7 @@ fun RegisterScreen(
     viewModel: AuthViewModel,
     uiState: AuthUIState,
     name: String?,
+    phoneNumber: String?,
     email: String?,
     password: String?,
     changeToLogin: () -> Unit,
@@ -526,6 +524,21 @@ fun RegisterScreen(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Next
                 ),
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            OutlinedTextField(
+                value = phoneNumber.orEmpty(),
+                onValueChange = { viewModel.setPhoneNumber(it) },
+                label = { Text(text = stringResource(id = R.string.phone_number)) },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Phone,
+                    imeAction = ImeAction.Done
+                ),
+                leadingIcon = {
+                    Text(text = "+62", modifier = Modifier.padding(start = 8.dp))
+                },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -561,13 +574,7 @@ fun RegisterScreen(
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !uiState.isLoading
             ) {
-                if (uiState.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(8.dp)
-                    )
-                } else {
-                    Text(text = stringResource(id = R.string.register))
-                }
+                Text(text = stringResource(id = R.string.register))
             }
             Spacer(modifier = Modifier.height(16.dp))
             Box (

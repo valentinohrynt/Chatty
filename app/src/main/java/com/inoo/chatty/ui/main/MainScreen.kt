@@ -2,6 +2,8 @@ package com.inoo.chatty.ui.main
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -10,11 +12,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.inoo.chatty.ui.component.CustomBottomNavigation
+import com.inoo.chatty.ui.main.chat.main.ChatScreen
+import com.inoo.chatty.ui.main.chat.receiverlist.ReceiverListScreen
 import com.inoo.chatty.ui.main.home.HomeScreen
+import com.inoo.chatty.ui.main.profile.ProfileScreen
 import com.inoo.chatty.ui.navigation.Routes
 
 @Composable
@@ -41,31 +46,55 @@ fun MainScreen(
         }
     }
 
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        NavHost(
-            navController = navController,
-            startDestination = Routes.HOME
-        ) {
-            composable(Routes.HOME) {
-                HomeScreen(
-                    onLogout = onLogout
+    Scaffold(
+        bottomBar = {
+            if (shouldShowBottomBar) {
+                CustomBottomNavigation(
+                    selectedItem = selectedItem,
+                    onItemSelected = { index ->
+                        selectedItem = index
+                        when (index) {
+                            0 -> navController.navigate(Routes.HOME) { launchSingleTop = true }
+                            1 -> navController.navigate(Routes.CHAT) { launchSingleTop = true }
+                            2 -> navController.navigate(Routes.PROFILE) { launchSingleTop = true }
+                        }
+                    }
                 )
             }
-            composable(Routes.CHAT) {
-
-            }
-            composable(Routes.PROFILE) {
-
-            }
         }
-        if (shouldShowBottomBar) {
-            CustomBottomNavigation(
-                modifier = Modifier.align(Alignment.BottomCenter),
-                selectedItem = selectedItem,
-                onItemSelected = { selectedItem = it }
-            )
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            NavHost(
+                navController = navController,
+                startDestination = Routes.HOME
+            ) {
+                composable(Routes.HOME) {
+                    HomeScreen()
+                }
+                composable(Routes.CHAT) {
+                    ChatScreen(
+                        onNewChatClick = {
+                            navController.navigate(Routes.RECEIVER_LIST)
+                        },
+                        onProfileClick = {},
+                        onChatRoomClick = {}
+                    )
+                }
+                composable(Routes.RECEIVER_LIST) {
+                    ReceiverListScreen(
+                        onContactSelected = {}
+                    )
+                }
+                composable(Routes.PROFILE) {
+                    ProfileScreen(
+                        onLogout = onLogout
+                    )
+                }
+            }
         }
     }
 }
