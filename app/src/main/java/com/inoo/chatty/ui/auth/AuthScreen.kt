@@ -26,12 +26,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -78,7 +76,9 @@ import kotlinx.coroutines.launch
 @Suppress("DEPRECATION")
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun AuthScreen(onSuccess: () -> Unit) {
+fun AuthScreen(
+    onSuccess: () -> Unit
+) {
     val viewModel = hiltViewModel<AuthViewModel>()
     val uiState by viewModel.uiState.collectAsState()
 
@@ -106,12 +106,20 @@ fun AuthScreen(onSuccess: () -> Unit) {
 
     LaunchedEffect(uiState) {
         when {
-            uiState.success != null -> {
+            uiState.success != null && isLogin.value == true -> {
                 toastMessage.value = uiState.success.orEmpty()
                 showToast.value = true
                 viewModel.setSuccess(null)
                 onSuccess()
             }
+
+            uiState.success != null && isLogin.value == false -> {
+                toastMessage.value = uiState.success.orEmpty()
+                showToast.value = true
+                isLogin.value = true
+                viewModel.setSuccess(null)
+            }
+
             uiState.error != null -> {
                 toastMessage.value = uiState.error.orEmpty()
                 showToast.value = true
@@ -167,8 +175,7 @@ fun AuthScreen(onSuccess: () -> Unit) {
             ) {
                 if (uiState.isLoading) {
                     LoadingState()
-                }
-                else if (isLoginScreen) {
+                } else if (isLoginScreen) {
                     LoginScreen(
                         viewModel = viewModel,
                         uiState = uiState,
@@ -185,7 +192,12 @@ fun AuthScreen(onSuccess: () -> Unit) {
 
                             val googleIdOption = GetGoogleIdOption.Builder()
                                 .setFilterByAuthorizedAccounts(false)
-                                .setServerClientId(getString(context, R.string.default_web_client_id))
+                                .setServerClientId(
+                                    getString(
+                                        context,
+                                        R.string.default_web_client_id
+                                    )
+                                )
                                 .build()
 
                             val request = GetCredentialRequest.Builder()
@@ -194,16 +206,22 @@ fun AuthScreen(onSuccess: () -> Unit) {
 
                             coroutineScope.launch {
                                 try {
-                                    val result: GetCredentialResponse = credentialManager.getCredential(
-                                        request = request,
-                                        context = context,
-                                    )
+                                    val result: GetCredentialResponse =
+                                        credentialManager.getCredential(
+                                            request = request,
+                                            context = context,
+                                        )
                                     when (val credential = result.credential) {
                                         is CustomCredential -> {
                                             if (credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
                                                 try {
-                                                    val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
-                                                    viewModel.loginWithGoogle(googleIdTokenCredential.idToken)
+                                                    val googleIdTokenCredential =
+                                                        GoogleIdTokenCredential.createFrom(
+                                                            credential.data
+                                                        )
+                                                    viewModel.loginWithGoogle(
+                                                        googleIdTokenCredential.idToken
+                                                    )
                                                 } catch (e: GoogleIdTokenParsingException) {
                                                     Log.d("Error", e.message.toString())
                                                 }
@@ -211,6 +229,7 @@ fun AuthScreen(onSuccess: () -> Unit) {
                                                 Log.d("Error", "Invalid credential type")
                                             }
                                         }
+
                                         else -> {
                                             Log.d("Error", "Invalid credential")
                                         }
@@ -236,9 +255,6 @@ fun AuthScreen(onSuccess: () -> Unit) {
                         email = email,
                         password = password,
                         changeToLogin = {
-                            isLogin.value = true
-                        },
-                        onSuccess = {
                             isLogin.value = true
                         }
                     )
@@ -315,6 +331,7 @@ fun LoginScreen(
                     viewModel = viewModel,
                     uiState = uiState
                 )
+
                 LoginMethod.PHONE -> PhoneLoginContent(
                     phoneNumber = phoneNumber,
                     viewModel = viewModel,
@@ -500,9 +517,8 @@ fun RegisterScreen(
     phoneNumber: String?,
     email: String?,
     password: String?,
-    changeToLogin: () -> Unit,
-    onSuccess: () -> Unit
-){
+    changeToLogin: () -> Unit
+) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -569,7 +585,7 @@ fun RegisterScreen(
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Button (
+            Button(
                 onClick = { viewModel.register() },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !uiState.isLoading
@@ -577,11 +593,11 @@ fun RegisterScreen(
                 Text(text = stringResource(id = R.string.register))
             }
             Spacer(modifier = Modifier.height(16.dp))
-            Box (
+            Box(
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
-                Row (
+                Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
@@ -596,8 +612,5 @@ fun RegisterScreen(
                 }
             }
         }
-    }
-    if (uiState.success != null) {
-        onSuccess()
     }
 }

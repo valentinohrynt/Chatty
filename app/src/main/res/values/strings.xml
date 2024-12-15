@@ -29,4 +29,6 @@
     <string name="profile">Profile</string>
     <string name="logout">Logout</string>
     <string name="chat">Chat</string>
+    <string name="account_settings">Account Settings</string>
+    <string name="notifications">Notifications</string>
 </resources>

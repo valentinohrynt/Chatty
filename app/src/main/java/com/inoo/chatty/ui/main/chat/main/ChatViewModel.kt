@@ -51,15 +51,148 @@ class ChatViewModel @Inject constructor(
                         userChatsRef.addValueEventListener(object : ValueEventListener {
                             override fun onDataChange(snapshot: DataSnapshot) {
                                 val chatRooms = mutableListOf<ChatRoomItem>()
-                                for (child in snapshot.children) {
-                                    val chatRoom = child.getValue(ChatRoomItem::class.java)
-                                    chatRooms.add(chatRoom!!)
+                                val chatRoomsMap = mutableMapOf<String, ChatRoomItem>()
+                                snapshot.children.forEach { chatRoom ->
+                                    val chatRoomId = chatRoom.value.toString()
+                                    val chatRoomRef = firebaseDatabase.getReference("chatRooms")
+                                        .child(chatRoomId)
+
+                                    chatRoomRef.addValueEventListener(object : ValueEventListener {
+                                        override fun onDataChange(snapshot: DataSnapshot) {
+                                            val chatRoomItem = ChatRoomItem(
+                                                roomId = chatRoomRef.key.toString(),
+                                                lastMessage = snapshot.child("last_message").value.toString(),
+                                                lastMessageTime = snapshot.child("last_message_time").value.toString(),
+                                                senderName = snapshot.child("members")
+                                                    .child("member1")
+                                                    .child("name").value.toString(),
+                                                senderPhoneNumber = snapshot.child("members")
+                                                    .child("member1")
+                                                    .child("phoneNumber").value.toString(),
+                                                senderProfilePicture = snapshot.child("members")
+                                                    .child("member1")
+                                                    .child("profilePicture").value.toString(),
+                                                receiverName = snapshot.child("members")
+                                                    .child("member2")
+                                                    .child("name").value.toString(),
+                                                receiverPhoneNumber = snapshot.child("members")
+                                                    .child("member2")
+                                                    .child("phoneNumber").value.toString(),
+                                                receiverProfilePicture = snapshot.child("members")
+                                                    .child("member2")
+                                                    .child("profilePicture").value.toString(),
+                                                createdAt = snapshot.child("created_at").value.toString(),
+                                                updatedAt = snapshot.child("updated_at").value.toString(),
+                                                deletedAt = snapshot.child("deleted_at").value.toString()
+                                            )
+                                            chatRoomsMap[chatRoomItem.roomId] = chatRoomItem
+
+                                            chatRooms.clear()
+                                            chatRooms.addAll(chatRoomsMap.values)
+
+                                            chatRoomRef.child("lastMessage")
+                                                .addValueEventListener(object : ValueEventListener {
+                                                    override fun onDataChange(lastMessageSnapshot: DataSnapshot) {
+                                                        if (lastMessageSnapshot.exists()) {
+                                                            val updatedLastMessage =
+                                                                lastMessageSnapshot.value.toString()
+
+                                                            val updatedChatRoom =
+                                                                chatRoomsMap[chatRoomItem.roomId]?.copy(
+                                                                    lastMessage = updatedLastMessage
+                                                                )
+
+                                                            if (updatedChatRoom != null) {
+                                                                chatRoomsMap[chatRoomItem.roomId] =
+                                                                    updatedChatRoom
+                                                                chatRooms.clear()
+                                                                chatRooms.addAll(chatRoomsMap.values)
+                                                                _chatRooms.value =
+                                                                    chatRooms.sortedByDescending { it.updatedAt }
+                                                            }
+                                                        }
+                                                    }
+
+                                                    override fun onCancelled(error: DatabaseError) {
+                                                    }
+
+                                                })
+
+                                            chatRoomRef.child("lastMessageTime")
+                                                .addValueEventListener(object : ValueEventListener {
+                                                    override fun onDataChange(
+                                                        lastMessageTimeSnapshot: DataSnapshot
+                                                    ) {
+                                                        if (lastMessageTimeSnapshot.exists()) {
+                                                            val updatedLastMessageTime =
+                                                                lastMessageTimeSnapshot.value.toString()
+
+                                                            val updatedChatRoom =
+                                                                chatRoomsMap[chatRoomItem.roomId]?.copy(
+                                                                    lastMessageTime = updatedLastMessageTime
+                                                                )
+
+                                                            if (updatedChatRoom != null) {
+                                                                chatRoomsMap[chatRoomItem.roomId] =
+                                                                    updatedChatRoom
+                                                                chatRooms.clear()
+                                                                chatRooms.addAll(chatRoomsMap.values)
+                                                                _chatRooms.value =
+                                                                    chatRooms.sortedByDescending { it.updatedAt }
+                                                            }
+                                                        }
+                                                    }
+
+                                                    override fun onCancelled(error: DatabaseError) {
+
+                                                    }
+
+                                                })
+
+                                            chatRoomRef.child("updatedAt")
+                                                .addValueEventListener(object : ValueEventListener {
+                                                    override fun onDataChange(updatedAtSnapshot: DataSnapshot) {
+                                                        if (updatedAtSnapshot.exists()) {
+                                                            val updatedUpdatedAt =
+                                                                updatedAtSnapshot.value.toString()
+
+                                                            val updatedChatRoom =
+                                                                chatRoomsMap[chatRoomItem.roomId]?.copy(
+                                                                    updatedAt = updatedUpdatedAt
+                                                                )
+
+                                                            if (updatedChatRoom != null) {
+                                                                chatRoomsMap[chatRoomItem.roomId] =
+                                                                    updatedChatRoom
+                                                                chatRooms.clear()
+                                                                chatRooms.addAll(chatRoomsMap.values)
+                                                                _chatRooms.value =
+                                                                    chatRooms.sortedByDescending { it.updatedAt }
+                                                            }
+                                                        }
+                                                    }
+
+                                                    override fun onCancelled(error: DatabaseError) {
+
+                                                    }
+
+                                                })
+                                        }
+
+                                        override fun onCancelled(error: DatabaseError) {
+                                            _uiState.value =
+                                                uiState.value.copy(
+                                                    error = error.message,
+                                                    isLoading = false
+                                                )
+                                        }
+                                    })
                                 }
                                 chatRepository.insertChatRooms(chatRooms).observeForever { result ->
                                     when (result) {
                                         is Result.Success -> {
                                             _uiState.value = uiState.value.copy(
-                                                success = "Chat rooms loaded",
+                                                success = "Chat rooms inserted",
                                                 isLoading = false
                                             )
                                             _chatRooms.value =

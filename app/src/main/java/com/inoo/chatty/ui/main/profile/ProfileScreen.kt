@@ -1,6 +1,5 @@
 package com.inoo.chatty.ui.main.profile
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -16,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
 import com.inoo.chatty.R
 import com.inoo.chatty.ui.auth.AuthViewModel
 
@@ -27,7 +27,9 @@ fun ProfileScreen(
 ) {
 
     val authViewModel = hiltViewModel<AuthViewModel>()
-
+    val viewModel = hiltViewModel<ProfileViewModel>()
+    val uiState by authViewModel.uiState.collectAsState()
+    val userData by viewModel.userData.collectAsState()
 
     Column(
         modifier = Modifier
@@ -40,36 +42,39 @@ fun ProfileScreen(
             style = MaterialTheme.typography.headlineSmall,
             modifier = Modifier.padding(bottom = 16.dp)
         )
-        Icon(
-            imageVector = Icons.Filled.AccountCircle,
-            contentDescription = "Profile",
-            modifier = Modifier
-                .size(64.dp)
-                .clip(CircleShape),
-            tint = MaterialTheme.colorScheme.primary
-        )
+        if (userData?.profilePicture?.isNotEmpty() == true) {
+            AsyncImage(
+                model = userData?.profilePicture,
+                contentDescription = "Profile picture",
+                modifier = Modifier
+                    .size(64.dp)
+                    .clip(CircleShape)
+            )
+        } else {
+            Icon(
+                imageVector = Icons.Filled.AccountCircle,
+                contentDescription = "Profile",
+                modifier = Modifier
+                    .size(64.dp)
+                    .clip(CircleShape),
+                tint = MaterialTheme.colorScheme.primary
+            )
+        }
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "Alex Johnson",
+            text = userData?.name.orEmpty(),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold
         )
         Text(
-            text = "@alexjohnson",
+            text = userData?.email.orEmpty(),
             style = MaterialTheme.typography.bodyMedium
         )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            ProfileStatItem(label = "Contacts", value = "142")
-            ProfileStatItem(label = "Messages/day", value = "3.5K")
-            ProfileStatItem(label = "Screen Time", value = "456")
-        }
+        Text(
+            text = userData?.phoneNumber.orEmpty(),
+            style = MaterialTheme.typography.bodyMedium
+        )
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -79,12 +84,12 @@ fun ProfileScreen(
         ) {
             ProfileActionItem(
                 icon = Icons.Default.Person,
-                title = "Account Settings",
+                title = stringResource(id = R.string.account_settings),
                 onClick = { /* Handle account settings */ }
             )
             ProfileActionItem(
                 icon = Icons.Default.Notifications,
-                title = "Notifications",
+                title = stringResource(id = R.string.notifications),
                 onClick = { /* Handle notifications */ }
             )
             ProfileActionItem(
@@ -110,21 +115,6 @@ fun ProfileScreen(
         ) {
             Text(stringResource(id = R.string.logout))
         }
-    }
-}
-
-@Composable
-fun ProfileStatItem(label: String, value: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = value,
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold
-        )
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodySmall
-        )
     }
 }
 
