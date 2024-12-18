@@ -51,6 +51,6 @@ This project is open-source and licensed under the MIT License. Check out the [L
 
 Have questions or suggestions? Let’s connect!
 
-📧 Email: [haroyantovalentino@gmail.com](mailto:hariyantovalentino@gmail.com)
+📧 Email: [hariyantovalentino@gmail.com](mailto:hariyantovalentino@gmail.com)
 
 🌟 Thank you for checking out our project. Together, let's build something amazing!
