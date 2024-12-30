@@ -19,7 +19,7 @@ import com.inoo.chatty.ui.component.CustomBottomNavigation
 import com.inoo.chatty.ui.main.chat.main.ChatScreen
 import com.inoo.chatty.ui.main.chat.receiverlist.ReceiverListScreen
 import com.inoo.chatty.ui.main.home.HomeScreen
-import com.inoo.chatty.ui.main.profile.ProfileScreen
+import com.inoo.chatty.ui.main.profile.main.ProfileScreen
 import com.inoo.chatty.ui.navigation.Routes
 
 @Composable

@@ -1,4 +1,4 @@
-package com.inoo.chatty.ui.main.profile
+package com.inoo.chatty.ui.main.profile.main
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -20,7 +20,6 @@ import com.inoo.chatty.R
 import com.inoo.chatty.ui.auth.AuthViewModel
 
 @Suppress("DEPRECATION")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
     onLogout: () -> Unit

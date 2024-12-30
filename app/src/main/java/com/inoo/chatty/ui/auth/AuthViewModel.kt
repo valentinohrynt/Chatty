@@ -39,25 +39,25 @@ class AuthViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(AuthUIState())
     val uiState = _uiState.asStateFlow()
 
-    private val _name = MutableStateFlow<String>("")
+    private val _name = MutableStateFlow("")
     val name = _name.asStateFlow()
 
-    private val _birthDate = MutableStateFlow<String>("")
-    val birthDate = _birthDate.asStateFlow()
+    private val _birthDate = MutableStateFlow("")
+    private val birthDate = _birthDate.asStateFlow()
 
-    private val _phoneNumber = MutableStateFlow<String>("")
+    private val _phoneNumber = MutableStateFlow("")
     val phoneNumber = _phoneNumber.asStateFlow()
 
-    private val _email = MutableStateFlow<String>("")
+    private val _email = MutableStateFlow("")
     val email = _email.asStateFlow()
 
-    private val _password = MutableStateFlow<String>("")
+    private val _password = MutableStateFlow("")
     val password = _password.asStateFlow()
 
-    private val _verificationCode = MutableStateFlow<String>("")
+    private val _verificationCode = MutableStateFlow("")
     val verificationCode = _verificationCode.asStateFlow()
 
-    private val _loginStatus = MutableStateFlow<Boolean>(false)
+    private val _loginStatus = MutableStateFlow(false)
     val loginStatus = _loginStatus.asStateFlow()
 
     init {

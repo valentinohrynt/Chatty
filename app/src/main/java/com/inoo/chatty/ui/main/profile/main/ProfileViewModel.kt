@@ -1,4 +1,4 @@
-package com.inoo.chatty.ui.main.profile
+package com.inoo.chatty.ui.main.profile.main
 
 import androidx.lifecycle.ViewModel
 import com.inoo.chatty.model.User
@@ -22,12 +22,12 @@ class ProfileViewModel @Inject constructor(
     fun getUserData() {
         userRepository.getUserData().observeForever { result ->
             when (result) {
-                is com.inoo.chatty.repository.Result.Success -> {
+                is Result.Success -> {
                     _uiState.value = _uiState.value.copy(success = "Success", isLoading = false)
                     _userData.value = result.data
                 }
 
-                is com.inoo.chatty.repository.Result.Error -> {
+                is Result.Error -> {
                     _uiState.value = _uiState.value.copy(error = result.error, isLoading = false)
                 }
 
